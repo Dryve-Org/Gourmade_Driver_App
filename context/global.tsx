@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import React, { useState, createContext, Dispatch, SetStateAction, useEffect } from 'react'
-import { api, apiUrl } from '../data/request'
+import { api, apiUrl } from '../data/requests'
 import { AddressI } from '../interface/api'
 
 export interface GlobalI {
@@ -57,23 +57,6 @@ const GlobalContextProvider = (props: GlobalContextProps) => {
         try {
             if(token) {
                 AsyncStorage.setItem('token', token)
-
-                //get geo location from first pickup address
-                const getPickup = await api(token)
-                    .get<AddressI>(`${ apiUrl }/client/retreive/pickupAddress`)
-                    .then(res => {
-                        return res.data
-                    })
-
-                if(getPickup) {
-                    setGlobal({
-                        ...global, 
-                        location: {
-                            latitude: getPickup.location.coordinates[0],
-                            longitude: getPickup.location.coordinates[1]
-                        }
-                    })
-                }
             }
         } catch(e: any) {
             console.log('unable to store token')

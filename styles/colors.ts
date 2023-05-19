@@ -42,3 +42,5 @@ export const theme = {
     text: colors.offGold,
     errorText: colors.orange
 }
+
+export default theme
