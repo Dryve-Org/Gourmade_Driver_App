@@ -1,6 +1,6 @@
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import React, { useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import MapView, { Marker } from 'react-native-maps'
 import { useGlobalContext } from '../../context/global'
@@ -88,7 +88,7 @@ const Map: React.FC = () => {
                     token,
                     forRegion.latitude,
                     forRegion.longitude,
-                    20
+                    2000
                 )
                 
                 const aptsData = await getApartments(token)
