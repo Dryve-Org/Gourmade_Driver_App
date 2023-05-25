@@ -2,8 +2,7 @@ import { StyleSheet, Text, View } from 'react-native'
 import { useGlobalContext } from '../context/global'
 import { RootStackParamList } from '../interface/navigation'
 import Login from './login'
-// import Home from './app'
-import useAsyncEffect from 'use-async-effect'
+import Home from './app'
 
 export default function Index() {
   const { global, setGlobal } = useGlobalContext()
@@ -14,8 +13,7 @@ export default function Index() {
   
   return (
     <>
-        {/* { !!global.token ? <Home /> : <Login /> } */}
-        <Login />
+        { !!global.token ? <Home /> : <Login /> }
     </>
   )
 }

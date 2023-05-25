@@ -2,7 +2,7 @@ import { StyleSheet, Image } from 'react-native'
 import theme, { colors } from '../styles/colors'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { NavigationContainer } from '@react-navigation/native'
-// import MapNavigation from '../components/navigation/navMap'
+import MapNavigation from '../components/navigation/navMap'
 import { MainButtonParams } from '../interface/navigation'
 import AccountNavigation from '../components/navigation/navAccount'
 // import AONavigation from '../components/navigation/navActiveOrders'
@@ -45,13 +45,13 @@ const Home = () => {
                     },
                 }}
             /> */}
-            {/* <Tab.Screen 
+            <Tab.Screen 
                 name="mapView" 
                 component={ MapNavigation }
                 options={{
                     tabBarLabel: 'Map',
                     headerShown: false,
-                    tabBarIcon(props) {
+                    tabBarIcon(props: any) {
                         
                         return (
                             <Image
@@ -61,7 +61,7 @@ const Home = () => {
                         )
                     }
                 }}
-            /> */}
+            />
             <Tab.Screen 
                 name="account" 
                 component={ AccountNavigation }
