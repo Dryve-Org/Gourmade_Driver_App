@@ -51,7 +51,6 @@ const CleanerDropOff = () => {
         useCallback(() => {
             getDriverActiveOrders(token)
                 .then(res => {
-                    console.log(res)
                     setDAO(res)
                 })
                 .finally(() => {

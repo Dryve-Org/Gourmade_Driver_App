@@ -20,25 +20,18 @@ const RequestsHook = (preferredCleaner: CleanerI | undefined) => {
     useEffect(() => {
         const handleAsync = async () => {
             const storedRequesets = await AsyncStorage.getItem('requests')
-            console.log('storedRequesets: ', storedRequesets)
             //edit: validate stored requests
             //if stored reqeusts exists put it in state
             if(storedRequesets) {
                 const parsedRequests: ServiceI[] = JSON.parse(storedRequesets)
 
                 const uniqueRequests = _.uniqBy(parsedRequests, '_id')
-                console.log('uniqueRequests', uniqueRequests)
                 const filterUniq = uniqueRequests.filter(req => {
                     return !_.includes(
                         preferredCleaner.services,
                         req
                     )
                 })
-
-                console.log('filterUniq: ', filterUniq)
-
-                console.log('filterUniq.length', filterUniq.length)
-                console.log('uniqueRequests: ', uniqueRequests.length)
 
                 if(filterUniq.length === uniqueRequests.length) {
                     setRequests(parsedRequests)
