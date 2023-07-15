@@ -43,7 +43,7 @@ const CleanerList = () => {
                 global.token,
                 35.1698945,
                 -80.9762814,
-                20
+                999
             )
 
             setCleaners(cleanersData)

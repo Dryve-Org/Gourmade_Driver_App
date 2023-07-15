@@ -2,7 +2,7 @@ import { NavigationContainer} from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { RootStackParamList } from '../../interface/navigation'
 import CreatingUser from './creatingUser'
-import Login from './Login'
+import Login from './login'
 // import SignUp from './signUp'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()

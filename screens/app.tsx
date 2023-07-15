@@ -67,15 +67,34 @@ const Home = () => {
                     component={ AONavigation }
                     options={{
                         tabBarLabel: 'Active Orders',
-                        headerShown: false
+                        headerShown: false,
+                        tabBarIcon(props: any) {
+                            
+                            return (
+                                <Image
+                                    style={{ width: 30, height: 30 }} 
+                                    source={require('../assets/images/clothes_bag.png')}
+                                />
+                            )
+                        }
                     }}
+                    
                 />
                 <Tab.Screen 
                     name="account" 
                     component={ AccountNavigation }
                     options={{
                         tabBarLabel: 'Account',
-                        headerShown: false
+                        headerShown: false,
+                        tabBarIcon(props: any) {
+                            
+                            return (
+                                <Image
+                                    style={{ width: 30, height: 30 }} 
+                                    source={require('../assets/images/person_bag.png')}
+                                />
+                            )
+                        }
                     }}
                 />
             </Tab.Navigator>

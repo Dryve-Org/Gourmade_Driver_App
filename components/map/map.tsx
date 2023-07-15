@@ -73,7 +73,6 @@ const Map: React.FC = () => {
                     longitudeDelta: 0.0922
                 }
             } else {
-                console.log('theLocation: ', theLocation)
                 if(!theLocation) return
                 forRegion = {
                     longitude: theLocation.coords.longitude,
