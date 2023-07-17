@@ -58,6 +58,7 @@ export const getOrderData = async (
  *     "email": "john@doe.com",
  *     "phone": "1234567890",
  *     "address": AddressI
+ * }
 */
 export const getNearByClns = async (
     token: string,
