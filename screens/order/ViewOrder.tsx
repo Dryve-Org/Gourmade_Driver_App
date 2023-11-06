@@ -72,9 +72,11 @@ const ViewOrder = () => {
 
             navigation.navigate('Unit', {
                 apt,
-                aptId: order.apartment._id,
+                aptId: apt._id,
                 bldId: order.building,
-                unitId: order.unit
+                unitNum: order.unit,
+                unitId: order.unitId
+
             })
         } catch {
 

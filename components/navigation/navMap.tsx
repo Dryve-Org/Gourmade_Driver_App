@@ -9,6 +9,7 @@ import CleanerChoice from "../../screens/cleaners/CleanerDropOff"
 import CleanerDropOff from "../../screens/cleaners/CleanerDropOff"
 import CleanerOrders from "../../screens/cleaners/CleanerOrders"
 import { colors } from "../../styles/colors"
+import ViewOrderByUnit from "../../screens/order/ViewOrderByUnit"
 
 
 const Stack = createNativeStackNavigator<MapStackParamsList>()
@@ -49,7 +50,7 @@ const MapNavigation = () => {
                 name='aptBld'
                 component={ BuildingInfoScreen }
                 options={{
-                    title: 'Building'
+                    title: 'Building',
                 }}
             />
             <Stack.Screen 
@@ -57,6 +58,13 @@ const MapNavigation = () => {
                 component={ Unit }
                 options={{
                     title: 'Unit'
+                }}
+            />
+            <Stack.Screen 
+                name='order'
+                component={ ViewOrderByUnit }
+                options={{
+                    title: 'Unit Order'
                 }}
             />
             <Stack.Screen 

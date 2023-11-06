@@ -1,4 +1,4 @@
-import { AptI, CleanerI, ServiceI, UnitI } from "./api"
+import { AptI, CleanerI, OrderI, ServiceI, UnitI } from "./api"
 // import { CleanerInfoI } from "./screens"
 
 export type RootStackParamList = {
@@ -25,10 +25,14 @@ export type MapStackParamsList = {
         aptId: string
         apt: AptI
     }
+    order: {
+        order: OrderI
+    }
     aptUnit: {
         aptId: string
         bldId: string
         apt: AptI
+        unitNum: string
         unitId: string
     }
     map: undefined
@@ -47,8 +51,8 @@ export type MapStackParamsList = {
 
 export type ActiveOrdersParams = {
     ActiveOrders: undefined
-    ViewOrder: {
-        orderId: string
+    Order: {
+        order: OrderI
     }
     Unit: {
         apt: AptI

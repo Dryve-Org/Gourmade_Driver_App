@@ -21,15 +21,15 @@ const AptList: React.FC<{
     return (
         <ScrollView>
             {
-                blds.map(bld => (
+                blds.map(bld => (<>
                     <TouchableOpacity onPress={() => buildingPress(bld[0])}>
                         <View style={ s.apt } key={bld[0]}>
                             <Text style={ s.aptHead }>{ bld[0] }</Text>
                         </View>
                     </TouchableOpacity>
+                    </>
                 ))
             }
-            
         </ScrollView>
     )
 }

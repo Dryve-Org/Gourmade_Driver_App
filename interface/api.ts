@@ -56,6 +56,7 @@ export type OrderstatusT = "Task Posted Pickup" |
     "Picked Up From Cleaner" |
     "Task Canceled" |
     "Pickup Driver On the Way" |
+    "Picked Up From Cleaner" |
     "Dropoff Driver On the Way" |
     "Clothes To Cleaner" |
     "Clothes Awaiting Pricing" |
@@ -86,6 +87,7 @@ export const orderStatuses: OrderstatusT[] = [
 ]
 
 export interface OrderI {
+    unitId: string
     phoneNumber: any
     _id: string
     apartment: {
@@ -101,7 +103,8 @@ export interface OrderI {
         _id: string
         firstName: string,
         lastName: string,
-        phoneNumber: string
+        phoneNumber: string,
+        email: string
     } // client
     origin?: AddressI // client pickup and dropoff
     dropOffAddress?: AddressI
@@ -199,6 +202,36 @@ export interface UnitI {
     isActive?: boolean
     address: AddressI
     activeOrder: OrderI
+    activeOrders: string[]
+    unitId: string
+    clients: {
+        _id: string
+        firstName: string
+        lastName: string
+        email: string
+        phoneNumber: string
+        preferences: string[]
+    }[]
+}
+
+export interface UnitRespI {
+    client?: {
+        firstName: string,
+        lastName: string,
+        phoneNumber: string
+    }
+    isActive?: boolean
+    address: AddressI
+    unitId: string
+    clients: {
+        _id: string
+        firstName: string
+        lastName: string
+        email: string
+        phoneNumber: string
+        preferences: string[]
+    }[]
+    activeOrders: OrderI[]
 }
 
 export interface AptBuildingI {

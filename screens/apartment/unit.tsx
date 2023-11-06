@@ -1,4 +1,4 @@
-import { RouteProp, useFocusEffect, useRoute } from '@react-navigation/native'
+import { RouteProp, useFocusEffect, useNavigation, useRoute } from '@react-navigation/native'
 import React, { useCallback, useState } from 'react'
 import {
     Text,
@@ -8,56 +8,74 @@ import {
     TouchableOpacity
 } from 'react-native'
 import { useGlobalContext } from '../../context/global'
-import { cancelUnitOrder, clientDropoff, createOrder, getUnit } from '../../data/requests'
-import { UnitI } from '../../interface/api'
+import { cancelOrderByOrderId, clientDropoff, createOrder, getDriverActiveOrders, getOrders, getUnit } from '../../data/requests'
+import { OrderI, OrderstatusT, UnitI, UnitRespI } from '../../interface/api'
 import { MapStackParamsList } from '../../interface/navigation'
 import { colors } from '../../styles/colors'
-import ActiveOrder from './OrderData'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 
-const DisplayData = (
-    headTxt: string,
-    bodyTxt: string
+type mapProps = NativeStackNavigationProp<MapStackParamsList, 'apartment'>
+
+const displayClients = (
+    client: UnitI['clients'][0], 
+    status: string,
+    handlePress: Function,
+    active: boolean,
+    hasOrder: boolean
 ) => {
-
     return (
-        <View style={s.aOData}>
-            <View style={s.aODataHead}>
-                <Text style={s.aODataHeadTxt}>
-                    { headTxt }
+        <TouchableOpacity onPress={() => handlePress(client)}>
+            <View style={active ? s.cltsCtn : s.cltsCtnGrn}>
+                <Text style={s.cltsTxt}>
+                    { client.firstName } {' '}
+                    { client.lastName }
+                    <Text style={s.containOrder}>
+                        { hasOrder ? ' - Currently have' : '' }
+                    </Text>
+                </Text>
+                <Text style={s.cltsTxt}>
+                    { client.email }
+                </Text>
+                <Text style={s.cltsTxt}>
+                    { status }
                 </Text>
             </View>
-            <View style={s.aODataBody}>
-                <Text style={s.aODataBodyTxt}>
-                    { bodyTxt }
-                </Text>
-            </View>
-        </View>
+        </TouchableOpacity>
     )
 }
 
 const Unit = () => {
     const [ loading, setLoading ] = useState<boolean>(true)
-    const [ unit, setUnit ] = useState<UnitI>()
+    const [ unit, setUnit ] = useState<UnitRespI>()
+    const [ activeOrders, setActiveOrders ] = useState<OrderI[]>([])
+    const [ chosenClient, setChosenClient ] = useState<string>('')
     const route = useRoute<RouteProp<MapStackParamsList, 'aptUnit'>>()
     const {
-        aptId,
         apt,
         bldId,
+        unitNum,
         unitId
     } = route.params
 
     const { global } = useGlobalContext()
     const { token } = global
 
+    const navigation = useNavigation<mapProps>()
+
     const handleGetUnit = () => {
+        getDriverActiveOrders(token)
+        .then(res => {
+            if(!!res) setActiveOrders(res)
+        })
+
         getUnit(
             token,
-            aptId,
-            bldId,
             unitId
         )
         .then(res => {
             res && setUnit(res)
+
+            return res
         })
         .finally(() => {
             setLoading(false)
@@ -80,31 +98,25 @@ const Unit = () => {
 
     if(!unit) {
         return(
-            <View>
-                <View style={ s.container }>
-                    <Text>Something went wrong</Text>
-                </View>
+            <View style={ s.container }>
+                <Text style={ s.loading }>Something went wrong</Text>
+                <Text style={ s.loading }>Could not get unit</Text>
             </View>
         )
     }
 
-    const client = unit.client
-    const aO = unit.activeOrder
-
-    const cancelOrder = async () => {
+    const cancelOrder = async (cltId: OrderI['_id']) => {
         try {
-            if(!unit.activeOrder) return
             setLoading(true)
 
-            await cancelUnitOrder(
+            const order = getOrderbyClient(cltId)
+
+            await cancelOrderByOrderId(
                 token,
-                aptId,
-                bldId,
-                unitId
+                order._id
             )
 
             await handleGetUnit()
-            console.log('order:', unit.activeOrder)
         } catch {
             console.error('something went wrong')
         } finally {
@@ -112,16 +124,18 @@ const Unit = () => {
         }
     }
 
-    const handleCreateOrder = async () => {
+    const handleCreateOrder = async (
+        cltId: string
+    ) => {
         try {
-            if(unit.activeOrder) return
             setLoading(true)
+            const client = getClientById(cltId)
+
 
             await createOrder(
                 token,
-                aptId,
-                bldId,
-                unitId
+                unit.unitId,
+                client.email
             )
 
             await handleGetUnit()
@@ -132,10 +146,13 @@ const Unit = () => {
         }
     }
 
-    const handleDropOff = async () => {
+    const handleDropOff = async (cltId: string) => {
         try {
             setLoading(true)
-            await clientDropoff(token, aO._id)
+            await clientDropoff(
+                token, 
+                getOrderbyClient(cltId)._id
+            )
             handleGetUnit()
         } catch {
 
@@ -144,65 +161,133 @@ const Unit = () => {
         }
     }
 
+    /**
+     * The function `getOrderbyClient` returns the first active order for a given client.
+     * @param clt - The parameter `clt` is of type `UnitI['clients'][0]`, which means it represents a
+     * client object from the `clients` array of the `UnitI` interface.
+     * @returns The function `getOrderbyClient` returns an object of type `OrderI`.
+     */
+    const getOrderbyClient = (cltId: string): OrderI => {
+        return unit.activeOrders.filter(unitOrder => unitOrder.client._id === cltId)[0]
+    }
+
+    const statusOfOrder = (cltId: string): string => {
+        const theOrder = getOrderbyClient(cltId)
+        if(!theOrder) return 'Needs an order'
+        return theOrder.status
+    }
+
+    const getClientById = (cltId: string) => {
+        return unit.clients.filter(clt => clt._id === cltId)[0]
+    }
+
+    const chooseClient = (clt: UnitI['clients'][0]) => {
+        setChosenClient(clt._id)
+    }
+
+    const doesDriverHaveOrder = (cltId: string) => {
+        const cltOrder = getOrderbyClient(cltId)
+        if(!cltOrder) return false
+
+        const orderIds = activeOrders.map(odr => odr._id)
+        return orderIds.includes(cltOrder._id)
+    }
+
+    const handleViewOrder = (cltId: string) => {
+        const cltOrder = getOrderbyClient(cltId)
+        if(!cltOrder) return
+        setChosenClient('')//reset chosen client
+
+        navigation.navigate('order', {
+            order: cltOrder
+        })
+    }
+
     return (
         <View style={ s.container }>
             <View style={ s.intro }>
                 <Text style={ s.aptName }>{ apt.name }</Text>
                 <Text style={ s.bldName }>
-                    {`Building #: ${bldId}`}
+                    {`Building: ${bldId}`}
                 </Text>
                 <Text style={ s.unit }>
-                    { unitId }
+                    Unit: { unitNum }
+                </Text>
+                <Text style={ s.unit }>
+                    Unit Id: { unitId }
                 </Text>
 
-                { client && 
+                {/* { client && 
                     <Text style={ s.bldName }>
                         Client Name: { client.firstName } { client.lastName }
                     </Text>
-                }
+                } */}
             </View>
-            <View style={s.activeOrderSection}>
-                <ScrollView>
-                    <View style={s.aOHead}>
-                        <Text style={s.aOHeadTxt}>
-                            Active Order
+            <View style={s.clientSection}>
+                <View>
+                    <View style={s.cltsHead}>
+                        <Text style={s.cltsHeadTxt}>
+                            Clients
                         </Text>
                     </View>
-                    { aO && <ActiveOrder {...aO} /> }
-                </ScrollView>
+                    <ScrollView style={s.cltsList}>
+                        {
+                            unit.clients.map(clt => displayClients(
+                                clt, 
+                                statusOfOrder(clt._id), 
+                                chooseClient,
+                                clt._id === chosenClient,
+                                doesDriverHaveOrder(clt._id)
+                            ))
+                        }
+                    </ScrollView>
+                </View>
             </View>
-            <View style={s.actionSection}>
-                {
-                    aO?.status === 'Clothes To Cleaner' &&
-                    <TouchableOpacity onPress={() => cancelOrder()}>
-                        <View style={s.actionBttn}>
-                            <Text style={s.actionBttnTxt}>
-                                Cancel Order
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                }
-                {
-                    !aO &&
-                    <TouchableOpacity onPress={() => handleCreateOrder()}>
-                        <View style={s.actionBttn}>
-                            <Text style={s.actionBttnTxt}>
-                                Create Order
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                }
-                {
-                    aO?.status === 'Picked Up From Cleaner' && 
-                    <TouchableOpacity onPress={() => handleDropOff()}>
-                        <View style={s.actionBttn}>
-                            <Text style={s.actionBttnTxt}>
-                                Drop Off Order
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                }
-            </View>
+
+            {
+                chosenClient && <>
+                <Text style={s.chosenCltHead}>
+                    For { unit.clients.find(clt => clt._id === chosenClient)?.firstName }
+                </Text>
+                <View style={s.actionSection}>
+                        <TouchableOpacity onPress={() => handleViewOrder(chosenClient)}>
+                            <View style={s.actionBttn}>
+                                <Text style={s.actionBttnTxt}>
+                                    View Order
+                                </Text>
+                            </View>
+                        </TouchableOpacity>
+                        {
+                            'Clothes To Cleaner' === statusOfOrder(chosenClient) && doesDriverHaveOrder(chosenClient) && <TouchableOpacity onPress={() => cancelOrder(chosenClient)}>
+                                <View style={s.actionBttn}>
+                                    <Text style={s.actionBttnTxt}>
+                                        Cancel Order
+                                    </Text>
+                                </View>
+                            </TouchableOpacity> 
+                        }
+                        {
+                            'Picked Up From Cleaner' === statusOfOrder(chosenClient) && doesDriverHaveOrder(chosenClient) && <TouchableOpacity onPress={() => handleDropOff(chosenClient)}>
+                                <View style={s.actionBttn}>
+                                    <Text style={s.actionBttnTxt}>
+                                        Dropoff Order
+                                    </Text>
+                                </View>
+                            </TouchableOpacity>
+                        }
+                        {
+                            'Needs an order' === statusOfOrder(chosenClient) && <TouchableOpacity onPress={() => handleCreateOrder(chosenClient)}>
+                                <View style={s.actionBttn}>
+                                    <Text style={s.actionBttnTxt}>
+                                        Start Order
+                                    </Text>
+                                </View>
+                            </TouchableOpacity>
+                        }
+                    </View>
+                </>
+            }
+            
         </View>
     )
 }
@@ -234,9 +319,9 @@ const s = StyleSheet.create({
     },
     unit: {
         color: colors.orange,
-        fontSize: 25
+        fontSize: 18
     },
-    activeOrderSection: {
+    clientSection: {
         width: '100%',
         flex: 6,
     },
@@ -244,7 +329,11 @@ const s = StyleSheet.create({
         borderWidth: 2,
         borderBottomColor: colors.orange
     },
-    aOHeadTxt: {
+    containOrder: {
+        textAlign: 'right',
+        color: colors.orange,
+    },
+    cltsHeadTxt: {
         fontSize: 23,
         fontStyle: 'italic',
         textAlign: 'center',
@@ -254,19 +343,35 @@ const s = StyleSheet.create({
         flexGrow: 2,
         justifyContent: 'space-between',
     },
-    aOData: {
+    cltsHead: {
 
     },
-    aODataHead: {
-
+    cltsTxt: {
+        color: 'white'
     },
-    aODataHeadTxt: {
+    cltsataHeadTxt: {
         color: colors.orange,
     },
-    aODataBody: {
+    cltsCtn: {
+        marginHorizontal: 20,
+        borderColor: 'white',
+        borderRadius: 10,
+        borderWidth: 2,
+        padding: 10,
+        marginBottom: 10
+    },
+    cltsCtnGrn: {
+        marginHorizontal: 20,
+        borderColor: 'green',
+        borderRadius: 10,
+        borderWidth: 2,
+        padding: 10,
+        marginBottom: 10
+    },
+    cltsList: {
 
     },
-    aODataBodyTxt: {
+    cltsataBodyTxt: {
         color: 'white',
     },
     actionSection: {
@@ -274,13 +379,18 @@ const s = StyleSheet.create({
         bottom: 0,
         // width: '100%',
         // height: '20%',
-        justifyContent: 'center',
-        alignItems: 'center'
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        flexDirection: 'row'
+    },
+    chosenCltHead: {
+        color: colors.orange,
+        textAlign: 'center',
     },
     actionBttn: {
         backgroundColor: colors.orange,
         borderRadius: 10,
-        width: '80%',
+        paddingHorizontal: 10,
         height: '90%',
         justifyContent: 'center',
     },
