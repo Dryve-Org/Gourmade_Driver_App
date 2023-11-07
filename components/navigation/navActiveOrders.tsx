@@ -3,6 +3,7 @@ import { ActiveOrdersParams, MapStackParamsList } from "../../interface/navigati
 import ActiveOrders from "../../screens/activeOrders/ActiveOrders"
 import Unit from "../../screens/apartment/unit"
 import ViewOrder from "../../screens/order/ViewOrder"
+import ViewOrderByUnit from "../../screens/order/ViewOrderByUnit"
 
 
 const Stack = createNativeStackNavigator<ActiveOrdersParams>()
@@ -20,7 +21,7 @@ const AONavigation = () => {
                 }}
             />
             <Stack.Screen 
-                name='ViewOrder'
+                name='Order'
                 component={ ViewOrder }
                 options={{
                     title: 'Order',

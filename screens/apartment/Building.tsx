@@ -61,11 +61,12 @@ const BuildingInfoScreen = () => {
 
     const unitsMap = Object.entries(aU)
 
-    const handleUnitPress = (unitId: string) => {
+    const handleUnitPress = (unitNum: string, unitId: string) => {
         navigation.navigate('aptUnit', {
+            apt,
             aptId,
             bldId,
-            apt,
+            unitNum,
             unitId
         })
     }
@@ -74,16 +75,17 @@ const BuildingInfoScreen = () => {
         <View style={ s.container }>
             <View style={ s.intro }>
                 <Text style={ s.address }>{ apt.name }</Text>
-                <Text style={ s.address }>Building #</Text>
+                <Text style={ s.address }>Building:</Text>
                 <Text style={ s.name }>{ bldId }</Text>
             </View>
             <ScrollView>
                 <View style={ s.optsList }>
                     {
                         unitsMap.map(unit => (
-                            <TouchableOpacity onPress={() => handleUnitPress(unit[0])}>
-                                <View style={ unit[1].activeOrder ? s.opt : s.opt2 }>
+                            <TouchableOpacity onPress={() => handleUnitPress(unit[0],unit[1].unitId)}>
+                                <View style={ !unit[1].activeOrders.length ? s.opt : s.opt2 }>
                                     <Text style={ s.optTxt }>{ unit[0] }</Text>
+                                    <Text style={ s.optTxt }>{ unit[1].unitId }</Text>
                                 </View>
                             </TouchableOpacity>
                         ))

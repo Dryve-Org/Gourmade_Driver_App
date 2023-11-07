@@ -51,7 +51,6 @@ const CleanerOrders = () => {
         useCallback(() => {
             getCleanerActiveOrders(token, cleanerId)
                 .then(res => {
-                    console.log(res)
                     setClnAO(res)
                 })
                 .finally(() => {
@@ -65,7 +64,6 @@ const CleanerOrders = () => {
             setLoading(true)
             getCleanerActiveOrders(token, cleanerId)
                 .then(res => {
-                    console.log(res)
                     setClnAO(res)
                 })
                 .finally(() => {
@@ -75,7 +73,6 @@ const CleanerOrders = () => {
             setLoading(true)
             getCleanerPickups(token, cleanerId)
                 .then(res => {
-                    console.log(res)
                     setClnAO(res)
                 })
                 .finally(() => {
@@ -149,7 +146,7 @@ const CleanerOrders = () => {
                         { clnName }
                     </Text>
                     <Text style={s.headHeaderTxt}>
-                        Your Active Orders
+                        Cleaner's Active Orders
                     </Text>
                     {
                         !clnAO.length &&

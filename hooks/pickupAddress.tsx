@@ -1,6 +1,6 @@
 import { useFocusEffect } from '@react-navigation/native'
 import { useState, useEffect, useCallback } from 'react'
-import { apiUrl, secureApi } from '../data/requests'
+import { apiUrl, api } from '../data/requests'
 import { AddressI } from '../interface/api'
 
 const pickupsHook = (token: string) => {
@@ -8,7 +8,7 @@ const pickupsHook = (token: string) => {
     const [ pickupAddress, setPickupAddress ] = useState<AddressI>()
 
     const getPickups = async () => {
-        const pickupsData = await secureApi(token)
+        const pickupsData = await api(token)
             .get<AddressI[]>(`${ apiUrl }/client/retreive/pickups`)
             .then(res => res.data)
             .catch((e) => {
@@ -16,7 +16,6 @@ const pickupsHook = (token: string) => {
                 return []
             })
         
-        console.log('pickupsData: ', pickupsData)
         setPickups(pickupsData)
         //find address with truthy default
         const dflt = pickupsData.filter(addy => addy.default)

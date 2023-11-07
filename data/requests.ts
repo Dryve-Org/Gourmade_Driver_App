@@ -1,7 +1,7 @@
 import axios from 'axios'
-import { AddressI, AptBuildingI, AptI, CleanerI, DriverI, OrderI, UnitI } from '../interface/api'
+import { AddressI, AptBuildingI, AptI, CleanerI, DriverI, OrderI, UnitI, UnitRespI } from '../interface/api'
 
-export const apiUrl = process.env.React_APP_APIURL ? process.env.React_APP_APIURL : "https://clownfish-app-66wbx.ondigitalocean.app"
+export const apiUrl = process.env.React_APP_APIURL ? process.env.React_APP_APIURL : "https://octopus-app-5lcnt.ondigitalocean.app/"
 
 /**
  * This function returns an axios instance with a baseURL and a header with an Authorization key and a
@@ -45,6 +45,23 @@ export const getOrderData = async (
     }
 }
 
+export const getOrders = async (
+    token: string,
+    orderIds: OrderI['_id'][]
+) => {
+    try { 
+        const orders = await api(token)
+            .post<OrderI[]>('/driver/order/orders', {
+                orderIds
+            })
+            .then(res => res.data)
+
+        return orders
+    } catch {
+        return undefined
+    }
+}
+
 /**
  * It makes a post request to the server, and returns the data from the response.
  * @param {string} token - string,
@@ -58,6 +75,7 @@ export const getOrderData = async (
  *     "email": "john@doe.com",
  *     "phone": "1234567890",
  *     "address": AddressI
+ * }
 */
 export const getNearByClns = async (
     token: string,
@@ -259,13 +277,11 @@ export const getActiveUnits = async (
 */
 export const getUnit = async (
     token: string,
-    aptId: string,
-    bldId: string,
     unitId: string
 ) => {
     try {
         const unit = await api(token)
-            .get<UnitI>(`/driver/apartment/${aptId}/${bldId}/${unitId}`)
+            .get<UnitRespI>(`/driver/apartment/unitId/${unitId}`)
             .then(res => res.data)
 
         return unit
@@ -283,15 +299,13 @@ export const getUnit = async (
  * @param {string} unitId - string
  * @returns The return type is OrderI.
  */
-export const cancelUnitOrder = async (
+export const cancelOrderByOrderId = async (
     token: string,
-    aptId: string,
-    bldId: string,
-    unitId: string
+    orderId: OrderI['_id']
 ) => {
     try {
         const order = await api(token)
-            .delete<OrderI>(`/driver/order/${aptId}/${bldId}/${unitId}/cancel_order`)
+            .delete<OrderI>(`/driver/order/${orderId}/cancel_order`)
             .then(res => res.data)
 
         return order
@@ -302,15 +316,12 @@ export const cancelUnitOrder = async (
 
 export const createOrder = async (
     token: string,
-    aptId: string,
-    bldId: string,
-    unitId: string
+    unitId: string,
+    email: string
 ) => {
     try {
-        console.log({ token, aptId, bldId, unitId })
-
         const order = await api(token)
-            .post<OrderI>(`/driver/order/create/${aptId}/${bldId}/${unitId}`)
+            .post<OrderI>(`/driver/order/client_create/${unitId}/${email}`)
             .then(res => res.data)
             .catch(err => console.log(err))
 

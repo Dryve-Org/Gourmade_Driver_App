@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { View, Text, Linking, StyleSheet, Touchable, TouchableOpacity, ScrollView } from 'react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
-import { apiUrl, getCleaner, secureApi } from '../../data/requests'
+import { apiUrl, getCleaner } from '../../data/requests'
 import { useGlobalContext } from '../../context/global'
 import { CleanerI, ServiceI } from '../../interface/api'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'

@@ -1,1 +1,1 @@
-export const apiUrl = process.env.React_APP_APIURL ? process.env.React_APP_APIURL : "https://clownfish-app-66wbx.ondigitalocean.app"
+export const apiUrl = process.env.React_APP_APIURL ? process.env.React_APP_APIURL : "https://octopus-app-5lcnt.ondigitalocean.app"

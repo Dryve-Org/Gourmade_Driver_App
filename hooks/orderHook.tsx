@@ -72,11 +72,8 @@ const driverTracking = (token: string) => {
     }
 
     useEffect(() => {
-        getOrder()
-
         getDriverLoc()
-
-        
+        getOrder()
     }, [])
 
     

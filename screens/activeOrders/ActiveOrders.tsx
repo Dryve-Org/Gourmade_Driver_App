@@ -15,21 +15,21 @@ import { cleanerDropOff, getCleaner, getCleanerActiveOrders, getDriverActiveOrde
 import { useGlobalContext } from '../../context/global'
 import { unixDateFormatter } from '../../constants/time'
 import _ from 'lodash'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 
 type AONavProps = NativeStackNavigationProp<ActiveOrdersParams, 'ActiveOrders'>
 
 const OrderCard = (
     order: OrderI,
-    select: (orderId: OrderI['_id']) => void
+    select: (order: OrderI) => void
 ) => {
     return (
-        <TouchableOpacity onPress={() => select(order._id)}>
+        <TouchableOpacity onPress={() => select(order)}>
             <View style={ s.order }>
                 <Text style={s.orderTxt}>{ order.apartment.name }</Text>
                 <Text style={s.orderTxt}>{order.client.firstName} {order.client.lastName}</Text>
                 <Text style={s.orderTxt}>{ unixDateFormatter(order.created) }</Text>
                 <Text style={s.orderTxt}>{ order.status }</Text>
+                <Text style={s.orderATxt}>{ order.unitId }</Text>
             </View>
         </TouchableOpacity>
     )
@@ -38,7 +38,6 @@ const OrderCard = (
 const ActiveOrders = () => {
     const [ dAO, setDAO ] = useState<DriverI['activeOrders']>()
     const [ driver, setDriver ] = useState<DriverI>()
-    const [ selAO, setSelAO ] = useState<OrderI['_id']>()
     const [ loading, setLoading ] = useState<boolean>(true)
     const { global } = useGlobalContext()
     const { token } = global
@@ -89,8 +88,8 @@ const ActiveOrders = () => {
         )
     }
 
-    const handleSelect = (orderId: OrderI['_id']) => {
-        navigation.navigate('ViewOrder', { orderId })
+    const handleSelect = (SelectedOrder: OrderI) => {
+        navigation.navigate('Order', { order: SelectedOrder })
     }
 
     return(
@@ -101,7 +100,7 @@ const ActiveOrders = () => {
                         {/* { driver?.user.firstName } { driver?.user.lastName } */}
                     </Text>
                     <Text style={s.headHeaderTxt}>
-                        Your Active Orders
+                        Cleaner's Active Orders
                     </Text>
                     {
                         !dAO?.length ?
@@ -163,6 +162,10 @@ const s = StyleSheet.create({
     orderTxt: {
         textAlign: 'center'
     },
+    orderATxt: {
+        textAlign: 'center',
+        fontWeight: 'bold'
+    }
 })
 
 export default ActiveOrders
