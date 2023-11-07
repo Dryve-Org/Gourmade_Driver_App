@@ -124,6 +124,7 @@ export interface OrderI {
     dropOffCostId?: string // cost for drive from Cleaner to origin
     cleanCostId?: string // total cost for cleaners
     cleaner: {
+        _id: string
         name: CleanerI["name"]
         email: CleanerI["email"]
         phoneNumber: CleanerI["phoneNumber"]

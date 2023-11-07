@@ -22,7 +22,7 @@ const AONavigation = () => {
             />
             <Stack.Screen 
                 name='Order'
-                component={ ViewOrderByUnit }
+                component={ ViewOrder }
                 options={{
                     title: 'Order',
                     headerShown: false

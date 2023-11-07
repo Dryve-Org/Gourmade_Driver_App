@@ -16,7 +16,6 @@ const pickupsHook = (token: string) => {
                 return []
             })
         
-        console.log('pickupsData: ', pickupsData)
         setPickups(pickupsData)
         //find address with truthy default
         const dflt = pickupsData.filter(addy => addy.default)

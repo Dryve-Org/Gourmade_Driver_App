@@ -10,11 +10,12 @@ import {
 import { useGlobalContext } from '../../context/global'
 import { cancelOrderByOrderId, clientDropoff, createOrder, getDriverActiveOrders, getOrders, getUnit } from '../../data/requests'
 import { OrderI, OrderstatusT, UnitI, UnitRespI } from '../../interface/api'
-import { MapStackParamsList } from '../../interface/navigation'
+import { ActiveOrdersParams, MapStackParamsList } from '../../interface/navigation'
 import { colors } from '../../styles/colors'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 
 type mapProps = NativeStackNavigationProp<MapStackParamsList, 'apartment'>
+type AONavProps = NativeStackNavigationProp<ActiveOrdersParams, 'ActiveOrders'>
 
 const displayClients = (
     client: UnitI['clients'][0], 
@@ -61,6 +62,7 @@ const Unit = () => {
     const { token } = global
 
     const navigation = useNavigation<mapProps>()
+    const aoNav = useNavigation<AONavProps>()
 
     const handleGetUnit = () => {
         getDriverActiveOrders(token)
@@ -198,7 +200,7 @@ const Unit = () => {
         if(!cltOrder) return
         setChosenClient('')//reset chosen client
 
-        navigation.navigate('order', {
+        aoNav.navigate('Order', {
             order: cltOrder
         })
     }

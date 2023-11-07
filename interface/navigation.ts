@@ -55,9 +55,10 @@ export type ActiveOrdersParams = {
         order: OrderI
     }
     Unit: {
-        apt: AptI
         aptId: string
         bldId: string
+        apt: AptI
+        unitNum: string
         unitId: string
     }
 }
