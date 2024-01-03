@@ -9,7 +9,7 @@ import {
 } from 'react-native'
 import { formatOrderData } from '../../constants/order'
 import { useGlobalContext } from '../../context/global'
-import { cancelUnitOrder, createOrder, getUnit } from '../../data/requests'
+import { createOrder, getUnit } from '../../data/requests'
 import { OrderI, UnitI } from '../../interface/api'
 import { MapStackParamsList } from '../../interface/navigation'
 import { colors } from '../../styles/colors'

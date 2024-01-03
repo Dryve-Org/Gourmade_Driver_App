@@ -61,6 +61,9 @@ export type ActiveOrdersParams = {
         unitNum: string
         unitId: string
     }
+    EditBagQuantity: {
+        order: OrderI
+    }
 }
 
 export type CleanerStackParams = {

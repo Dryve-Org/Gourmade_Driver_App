@@ -49,6 +49,7 @@ export interface CleanerI {
     services: ServiceI[]
     activeOrders: OrderI[]
     preferred?: boolean
+    location: PointI
 }
 
 export type OrderstatusT = "Task Posted Pickup" |
@@ -87,6 +88,7 @@ export const orderStatuses: OrderstatusT[] = [
 ]
 
 export interface OrderI {
+    bagQuantity: number
     unitId: string
     phoneNumber: any
     _id: string

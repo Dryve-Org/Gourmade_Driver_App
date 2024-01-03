@@ -46,7 +46,7 @@ const Map: React.FC = () => {
 
     const { token } = global
 
-    const { driverLoc, driver } = driverTracking(token)
+    // const { driverLoc, driver } = driverTracking(token)
 
     const pickupData = pickupsHook(token)
     const { pickupAddress, pickups } = pickupData
@@ -127,7 +127,7 @@ const Map: React.FC = () => {
     }
 
     if(error) return <Text>Unable to access location</Text>
-    
+
     return (
         <>
             <MapView

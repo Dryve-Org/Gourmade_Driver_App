@@ -81,8 +81,7 @@ const Login = () => {
       } 
       catch (e: any) {
         setValues({ ...values, password: "" })
-
-        console.log(e.response)
+        
         if(e.response.status === 401) {
           setInvalid("Invalid username or password")
         }

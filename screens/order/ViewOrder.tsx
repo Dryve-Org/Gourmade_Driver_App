@@ -19,7 +19,7 @@ const DataDisplay = ({
     label: string;
     data: string | number | boolean | undefined;
     onPress?: Function
-    parameter?: string
+    parameter?: any
 }) => {
 
     if(onPress && parameter) {
@@ -122,6 +122,17 @@ const ViewOrder: React.FC = () => {
         )
     }
 
+    const handleGoToEditBagQuantity = () => {
+        if(order.status === 'Clothes To Cleaner') {
+            navigation.navigate(
+                'EditBagQuantity',
+                {
+                    order: order
+                }
+            )
+        }
+    }
+
     return (
         <View style={s.container}>
             <View style={s.head}>
@@ -140,19 +151,24 @@ const ViewOrder: React.FC = () => {
                             label="Name" 
                             data={`${order.client.firstName} ${order.client.lastName}`}
                         />
-                        <DataDisplay label="Start Time" data={unixDateFormatter(order.created)} />
                         <DataDisplay 
                             label="Cleaner" 
                             data={order.cleaner?.name}
                             onPress={handleGoToCleaner}
-                            // parameter={order.cleaner}
                         />
+                        <DataDisplay label="Start Time" data={unixDateFormatter(order.created)} />
                         <DataDisplay label="Status" data={order.status} />
                         <DataDisplay 
                             label="Address" 
                             data={order.dropOffAddress?.formatted}
                             onPress={copyToClipboard}
                             parameter={order.dropOffAddress?.formatted}
+                        />
+                        <DataDisplay 
+                            label="Bag Quantity" 
+                            data={order.bagQuantity}
+                            onPress={handleGoToEditBagQuantity}
+                            parameter={order}
                         />
                     </View>
                 </ScrollView>
