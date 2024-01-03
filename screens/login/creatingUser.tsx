@@ -52,7 +52,6 @@ const CreatingUser = () => {
 
     const getLocationHandler = async () => {
         const hasPermission = await verifyPermission()
-        console.log('permission:', hasPermission)
 
         if(!hasPermission) {
             await requestPermission()

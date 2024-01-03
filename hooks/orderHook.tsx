@@ -17,6 +17,7 @@ const driverTracking = (token: string) => {
         lastName: string
         phoneNumber: string
     }>()
+
     const getOrder = async () => {
         try {
             const order = await api(token)

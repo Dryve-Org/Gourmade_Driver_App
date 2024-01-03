@@ -44,7 +44,6 @@ const RequestsHook = (preferredCleaner: CleanerI | undefined) => {
 
     useEffect(() => {
         if(requests.length) {
-            console.log('attacked')
             AsyncStorage.setItem('requests', JSON.stringify(requests))
         }
     }, [ requests ])

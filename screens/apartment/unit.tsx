@@ -17,15 +17,23 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 type mapProps = NativeStackNavigationProp<MapStackParamsList, 'apartment'>
 type AONavProps = NativeStackNavigationProp<ActiveOrdersParams, 'ActiveOrders'>
 
-const displayClients = (
+const DisplayClients = ({
+    client, 
+    status,
+    handlePress,
+    active,
+    hasOrder,
+    key
+}: {
     client: UnitI['clients'][0], 
     status: string,
     handlePress: Function,
     active: boolean,
-    hasOrder: boolean
-) => {
+    hasOrder: boolean,
+    key: string
+}) => {
     return (
-        <TouchableOpacity onPress={() => handlePress(client)}>
+        <TouchableOpacity onPress={() => handlePress(client)} key={key}>
             <View style={active ? s.cltsCtn : s.cltsCtnGrn}>
                 <Text style={s.cltsTxt}>
                     { client.firstName } {' '}
@@ -67,8 +75,11 @@ const Unit = () => {
     const handleGetUnit = () => {
         getDriverActiveOrders(token)
         .then(res => {
-            if(!!res) setActiveOrders(res)
+            if(!!res){
+                setActiveOrders(res)
+            }
         })
+        .catch(e => console.log('could not get active orders: ', e))
 
         getUnit(
             token,
@@ -138,7 +149,14 @@ const Unit = () => {
                 token,
                 unit.unitId,
                 client.email
-            )
+            ).then(res => {
+                if(res) {
+                    console.log('order created')
+                    aoNav.navigate('EditBagQuantity', {
+                        order: res
+                    })
+                }
+            })
 
             await handleGetUnit()
         } catch(e) {
@@ -191,7 +209,10 @@ const Unit = () => {
         const cltOrder = getOrderbyClient(cltId)
         if(!cltOrder) return false
 
+        const list = activeOrders.map(odr => odr.client.email)
+
         const orderIds = activeOrders.map(odr => odr._id)
+        console.log(orderIds)
         return orderIds.includes(cltOrder._id)
     }
 
@@ -234,13 +255,14 @@ const Unit = () => {
                     </View>
                     <ScrollView style={s.cltsList}>
                         {
-                            unit.clients.map(clt => displayClients(
-                                clt, 
-                                statusOfOrder(clt._id), 
-                                chooseClient,
-                                clt._id === chosenClient,
-                                doesDriverHaveOrder(clt._id)
-                            ))
+                            unit.clients.map(clt => <DisplayClients
+                                client={clt} 
+                                status={statusOfOrder(clt._id)}
+                                handlePress={chooseClient}
+                                active={clt._id === chosenClient}
+                                hasOrder={doesDriverHaveOrder(clt._id)}
+                                key={clt._id}
+                            />)
                         }
                     </ScrollView>
                 </View>

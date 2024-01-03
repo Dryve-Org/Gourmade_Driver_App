@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Gourmade_Driver_App",
-    "slug": "Gourmade_Driver_App",
+    "slug": "test",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -25,6 +25,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "5abc258b-f99b-4929-9694-d52107643daf"
+      }
+    },
+    "owner": "gourmade_laundry"
   }
 }

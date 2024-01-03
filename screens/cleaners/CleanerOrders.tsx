@@ -121,7 +121,6 @@ const CleanerOrders = () => {
 
     const handlePickupOrders = async () => {
         try {
-            console.log('pressed')
             setLoading(true)
             await AsyncStorage.setItem('pickedUpOrderIds', JSON.stringify(selAO))
             await pickUpOrders(token, cleanerId, selAO)

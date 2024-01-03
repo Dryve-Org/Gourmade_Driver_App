@@ -238,7 +238,7 @@ export const getApartment = async (
             .then(res => res.data)
         
         return apt
-    } catch {
+    } catch(e) {
         return null
     }
 }
@@ -338,6 +338,24 @@ export const clientDropoff = async (
     try {
         const order = await api(token)
             .post<OrderI>(`/driver/order/${ orderId }/client_dropoff`)
+            .then(res => res.data)
+
+        return order
+    } catch {
+        return null
+    }
+}
+
+export const updateBagQuantity = async (
+    token: string,
+    orderId: OrderI['_id'],
+    bagQuantity: number
+) => {
+    try {
+        const order = await api(token)
+            .post<OrderI>(`/driver/order/bagquantity/${ orderId }/${bagQuantity}`, {
+                bagQuantity
+            })
             .then(res => res.data)
 
         return order
